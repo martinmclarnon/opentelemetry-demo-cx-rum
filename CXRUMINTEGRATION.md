@@ -70,7 +70,7 @@ The benefits you get with Coralogix’s Real User Monitoring are; automatic inst
 Now for some code, let's then dive into how to instrument this into OpenTelemetry Demo’s Next.js frontend. This was my first experience with Next.js and I was very nervous about how I was going to edit a code-base written by really great engineers without turning it into mush. But as you will see, this integration is really straightforward and will have you observing your user’s actions in no time. In this guide, I will walk you through how I integrated Coralogix’s Real User Monitoring into the OpenTelemetry Demo Application, enabling seamless instrumentation for the frontend. I didn’t manage all of this by myself, I had great help from my colleague, David Bott, who gave great mentorship and guidance with its integration (and most of the configuration settings). 
 
 1 - Install the Coralogix RUM Browser SDK
-Install the Coralogix RUM Browser SDK to the frontend code at ```./src/otel-colletor/frontend```. This will ensure when you write the integration code you won’t get errors and the ```package.json``` file will have the Coralogix RUM dependency.
+Install the Coralogix RUM Browser SDK to the frontend code at ```./src/frontend```. This will ensure when you write the integration code you won’t get errors and the ```package.json``` file will have the Coralogix RUM dependency.
 
 ```bash
 $ npm install @coralogix/browser
