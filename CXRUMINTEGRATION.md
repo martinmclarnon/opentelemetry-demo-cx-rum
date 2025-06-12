@@ -142,9 +142,9 @@ declare global {
 }
 ```
 
-5 - Add new React component is responsible for loading and initializing Coralogix RUM
+5 - Add new React component, this responsible for loading and initializing Coralogix RUM
 
-To load the Coralogix RUM SDK dynamically to ensure it doesn’t block page rendering. Navigate to, ```./src/otel-colletor/frontend/pages```, and create a new file, ```./src/otel-colletor/frontend/pages/_coralogix.tsx```, and add the code below,
+To load the Coralogix RUM SDK dynamically to ensure it doesn’t block page rendering. Navigate to, ```./src/frontend/pages```, and create a new file, ```./src/frontend/pages/_coralogix.tsx```, and add the code below,
 
 ```typescript
 'use client';
