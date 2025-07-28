@@ -1,6 +1,6 @@
 # Copyright The OpenTelemetry Authors
 # SPDX-License-Identifier: Apache-2.0
-
+# file: src/accounting/Dockerfile
 FROM --platform=${BUILDPLATFORM} mcr.microsoft.com/dotnet/sdk:8.0 AS builder
 ARG TARGETARCH
 ARG BUILD_CONFIGURATION=Release

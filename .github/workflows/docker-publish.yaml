@@ -24,6 +24,7 @@ jobs:
     env:
       REGISTRY: ghcr.io
       IMAGE_PREFIX: ghcr.io/${{ github.repository }}
+      OTEL_JAVA_AGENT_VERSION: 1.33.0
 
     steps:
       - name: Checkout repo
@@ -45,10 +46,8 @@ jobs:
             echo "TAG=latest" >> $GITHUB_ENV
           fi
 
-      - name: Detect changed services and build/push
+      - name: Detect and build changed service images
         run: |
-          IMAGES="accounting ad cart checkout currency email fraud-detection frontend frontend-proxy image-provider load-generator quote product-catalog recommendation shipping kafka flagd-ui"
-
           git fetch --deepen=50
           BASE_SHA=${{ github.event.before }}
 
@@ -59,15 +58,18 @@ jobs:
 
           CHANGED=$(git diff --name-only $BASE_SHA ${{ github.sha }})
 
-          for IMAGE in $IMAGES; do
-            if echo "$CHANGED" | grep -q "^src/$IMAGE/"; then
-              echo "🔨 Building and pushing $IMAGE (changed) as tag $TAG..."
+          for DOCKERFILE in $(find src -name Dockerfile); do
+            DIR=$(dirname "$DOCKERFILE")
+            SERVICE=$(basename "$DIR")
+
+            if echo "$CHANGED" | grep -q "^$DIR/"; then
+              echo "🔨 Building and pushing $SERVICE (changed) as tag $TAG..."
               docker build \
-                --build-arg OTEL_JAVA_AGENT_VERSION=1.34.0 \
-                -t ghcr.io/martinmclarnon/opentelemetry-demo-cx-rum-$IMAGE:$TAG \
-                -f src/$IMAGE/Dockerfile . \
-                && docker push ghcr.io/martinmclarnon/opentelemetry-demo-cx-rum-$IMAGE:$TAG;
+                --build-arg OTEL_JAVA_AGENT_VERSION=${{ env.OTEL_JAVA_AGENT_VERSION }} \
+                -t $IMAGE_PREFIX-$SERVICE:$TAG \
+                -f $DOCKERFILE . \
+                && docker push $IMAGE_PREFIX-$SERVICE:$TAG
             else
-              echo "⏭️ Skipping $IMAGE (no changes)"
+              echo "⏭️ Skipping $SERVICE (no changes)"
             fi
           done
