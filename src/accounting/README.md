@@ -26,3 +26,4 @@ To bump all dependencies run in Package manager:
 ```sh
 Update-Package -ProjectName Accounting
 ```
+# dummy change
