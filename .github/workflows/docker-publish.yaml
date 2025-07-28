@@ -1,0 +1,38 @@
+name: Build and Push Images to GHCR
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'src/**'
+      - '.github/workflows/docker-publish.yaml'
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    env:
+      REGISTRY: ghcr.io
+      IMAGE_PREFIX: ghcr.io/${{ github.repository }}
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push all service images
+        run: |
+          IMAGES="accounting ad cart checkout currency email fraud-detection frontend frontend-proxy image-provider load-generator quote product-catalog recommendation shipping kafka flagd-ui"
+          for image in $IMAGES; do
+            echo "🔨 Building and pushing $image..."
+            docker build -t $IMAGE_PREFIX-$image:latest -f src/$image/Dockerfile .
+            docker push $IMAGE_PREFIX-$image:latest
+          done
