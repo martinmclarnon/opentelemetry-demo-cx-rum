@@ -30,9 +30,11 @@ jobs:
 
       - name: Build and push all service images
         run: |
-          IMAGES="accounting ad cart checkout currency email fraud-detection frontend frontend-proxy image-provider load-generator quote product-catalog recommendation shipping kafka flagd-ui"
-          for image in $IMAGES; do
-            echo "🔨 Building and pushing $image..."
-            docker build -t $IMAGE_PREFIX-$image:latest -f src/$image/Dockerfile .
-            docker push $IMAGE_PREFIX-$image:latest
+          for IMAGE in $IMAGES; do
+            echo "🔨 Building and pushing $IMAGE..."
+            docker build \
+              --build-arg OTEL_JAVA_AGENT_VERSION=1.34.0 \
+              -t ghcr.io/martinmclarnon/opentelemetry-demo-cx-rum-$IMAGE:latest \
+              -f src/$IMAGE/Dockerfile . \
+              && docker push ghcr.io/martinmclarnon/opentelemetry-demo-cx-rum-$IMAGE:latest;
           done
