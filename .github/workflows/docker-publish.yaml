@@ -40,22 +40,24 @@ jobs:
         id: extract-tag
         run: |
           if [[ "${GITHUB_REF}" == refs/tags/v* ]]; then
-            echo "::set-output name=TAG::${GITHUB_REF#refs/tags/}"
+            echo "TAG=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
           else
-            echo "::set-output name=TAG::latest"
+            echo "TAG=latest" >> $GITHUB_ENV
           fi
 
       - name: Detect changed services and build/push
         run: |
           IMAGES="accounting ad cart checkout currency email fraud-detection frontend frontend-proxy image-provider load-generator quote product-catalog recommendation shipping kafka flagd-ui"
+
+          git fetch --deepen=50
           BASE_SHA=${{ github.event.before }}
+
           if [ -z "$BASE_SHA" ] || ! git cat-file -e $BASE_SHA 2>/dev/null; then
-            echo "⚠️ Base commit is missing or invalid, falling back to HEAD~1"
-            BASE_SHA=$(git rev-parse HEAD~1)
+            echo "⚠️ Base commit is missing or invalid, falling back to HEAD^"
+            BASE_SHA=$(git rev-parse HEAD^)
           fi
 
           CHANGED=$(git diff --name-only $BASE_SHA ${{ github.sha }})
-          TAG="${{ steps.extract-tag.outputs.TAG }}"
 
           for IMAGE in $IMAGES; do
             if echo "$CHANGED" | grep -q "^src/$IMAGE/"; then
