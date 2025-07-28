@@ -58,17 +58,23 @@ jobs:
 
           CHANGED=$(git diff --name-only $BASE_SHA ${{ github.sha }})
 
-          for DOCKERFILE in $(find src -name Dockerfile); do
-            DIR=$(dirname "$DOCKERFILE")
-            SERVICE=$(basename "$DIR")
+          for DOCKERFILE in $(find src -type f -name Dockerfile); do
+            SERVICE_DIR=$(dirname "$DOCKERFILE")
+            SERVICE=$(basename "$SERVICE_DIR")
 
-            if echo "$CHANGED" | grep -q "^$DIR/"; then
+            # Special case for cart Dockerfile under src/cart/src
+            if [[ "$SERVICE_DIR" == "src/cart/src" ]]; then
+              SERVICE="cart"
+              SERVICE_DIR="src/cart/src"
+            fi
+
+            if echo "$CHANGED" | grep -q "^src/$SERVICE/"; then
               echo "🔨 Building and pushing $SERVICE (changed) as tag $TAG..."
               docker build \
                 --build-arg OTEL_JAVA_AGENT_VERSION=${{ env.OTEL_JAVA_AGENT_VERSION }} \
-                -t $IMAGE_PREFIX-$SERVICE:$TAG \
-                -f $DOCKERFILE . \
-                && docker push $IMAGE_PREFIX-$SERVICE:$TAG
+                -t ghcr.io/martinmclarnon/opentelemetry-demo-cx-rum-$SERVICE:$TAG \
+                -f $DOCKERFILE $SERVICE_DIR \
+                && docker push ghcr.io/martinmclarnon/opentelemetry-demo-cx-rum-$SERVICE:$TAG;
             else
               echo "⏭️ Skipping $SERVICE (no changes)"
             fi
