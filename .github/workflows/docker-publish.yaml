@@ -33,49 +33,48 @@ jobs:
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v3
         with:
-          registry: ghcr.io
+          registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Extract tag from Git ref (if versioned tag)
-        id: extract-tag
+      - name: Determine changed services
+        id: changes
         run: |
-          if [[ "${GITHUB_REF}" == refs/tags/v* ]]; then
-            echo "TAG=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
-          else
-            echo "TAG=latest" >> $GITHUB_ENV
-          fi
-
-      - name: Detect and build changed service images
-        run: |
-          git fetch --deepen=50
-          BASE_SHA=${{ github.event.before }}
-
+          IMAGES="accounting ad cart checkout currency email fraud-detection frontend frontend-proxy image-provider load-generator quote product-catalog recommendation shipping kafka flagd-ui"
+          BASE_SHA=$(git rev-parse HEAD~1 || echo "")
           if [ -z "$BASE_SHA" ] || ! git cat-file -e $BASE_SHA 2>/dev/null; then
-            echo "⚠️ Base commit is missing or invalid, falling back to HEAD^"
-            BASE_SHA=$(git rev-parse HEAD^)
+            echo "⚠️ Base commit missing or invalid, falling back to HEAD~1"
+            BASE_SHA=$(git rev-parse HEAD~1)
           fi
 
-          CHANGED=$(git diff --name-only $BASE_SHA ${{ github.sha }})
+          CHANGED=$(git diff --name-only $BASE_SHA $GITHUB_SHA)
+          echo "Changed files: $CHANGED"
 
-          for DOCKERFILE in $(find src -type f -name Dockerfile); do
-            SERVICE_DIR=$(dirname "$DOCKERFILE")
-            SERVICE=$(basename "$SERVICE_DIR")
+          echo "IMAGES=$IMAGES" >> $GITHUB_ENV
+          echo "CHANGED=$CHANGED" >> $GITHUB_ENV
 
-            # Special case for cart Dockerfile under src/cart/src
-            if [[ "$SERVICE_DIR" == "src/cart/src" ]]; then
-              SERVICE="cart"
-              SERVICE_DIR="src/cart/src"
-            fi
+      - name: Build and push Docker images
+        run: |
+          for IMAGE in $IMAGES; do
+            if echo "$CHANGED" | grep -q "^src/$IMAGE/"; then
+              echo "🔨 Building and pushing $IMAGE (changed) as tag latest..."
 
-            if echo "$CHANGED" | grep -q "^src/$SERVICE/"; then
-              echo "🔨 Building and pushing $SERVICE (changed) as tag $TAG..."
-              docker build \
-                --build-arg OTEL_JAVA_AGENT_VERSION=${{ env.OTEL_JAVA_AGENT_VERSION }} \
-                -t ghcr.io/martinmclarnon/opentelemetry-demo-cx-rum-$SERVICE:$TAG \
-                -f $DOCKERFILE $SERVICE_DIR \
-                && docker push ghcr.io/martinmclarnon/opentelemetry-demo-cx-rum-$SERVICE:$TAG;
+              if [ "$IMAGE" = "cart" ]; then
+                docker build \
+                  -f src/cart/src/Dockerfile \
+                  -t $IMAGE_PREFIX-$IMAGE:latest \
+                  --build-arg OTEL_JAVA_AGENT_VERSION=$OTEL_JAVA_AGENT_VERSION \
+                  src/cart
+              else
+                docker build \
+                  -f src/$IMAGE/Dockerfile \
+                  -t $IMAGE_PREFIX-$IMAGE:latest \
+                  --build-arg OTEL_JAVA_AGENT_VERSION=$OTEL_JAVA_AGENT_VERSION \
+                  src/$IMAGE
+              fi
+
+              docker push $IMAGE_PREFIX-$IMAGE:latest
             else
-              echo "⏭️ Skipping $SERVICE (no changes)"
+              echo "⏭️ Skipping $IMAGE (no changes)"
             fi
           done
