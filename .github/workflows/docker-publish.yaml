@@ -24,11 +24,12 @@ jobs:
     env:
       REGISTRY: ghcr.io
       IMAGE_PREFIX: ghcr.io/${{ github.repository }}
-      OTEL_JAVA_AGENT_VERSION: 1.33.0
 
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Ensure full history for git diff
 
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v3
@@ -37,44 +38,38 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Determine changed services
-        id: changes
+      - name: Fetch Git history
+        run: |
+          git fetch --prune --unshallow || true
+          git fetch --deepen=50 || true
+
+      - name: Build and push images
         run: |
           IMAGES="accounting ad cart checkout currency email fraud-detection frontend frontend-proxy image-provider load-generator quote product-catalog recommendation shipping kafka flagd-ui"
           BASE_SHA=$(git rev-parse HEAD~1 || echo "")
           if [ -z "$BASE_SHA" ] || ! git cat-file -e $BASE_SHA 2>/dev/null; then
-            echo "⚠️ Base commit missing or invalid, falling back to HEAD~1"
-            BASE_SHA=$(git rev-parse HEAD~1)
+            echo "⚠️ Base commit missing or invalid, falling back to HEAD"
+            BASE_SHA=$(git rev-parse HEAD)
           fi
 
-          CHANGED=$(git diff --name-only $BASE_SHA $GITHUB_SHA)
-          echo "Changed files: $CHANGED"
+          CHANGED=$(git diff --name-only $BASE_SHA HEAD)
 
-          echo "IMAGES=$IMAGES" >> $GITHUB_ENV
-          echo "CHANGED=$CHANGED" >> $GITHUB_ENV
-
-      - name: Build and push Docker images
-        run: |
           for IMAGE in $IMAGES; do
+            DOCKERFILE_PATH="src/$IMAGE/Dockerfile"
+            # Special case for cart service
+            if [ "$IMAGE" = "cart" ]; then
+              DOCKERFILE_PATH="src/cart/src/Dockerfile"
+            fi
+
             if echo "$CHANGED" | grep -q "^src/$IMAGE/"; then
               echo "🔨 Building and pushing $IMAGE (changed) as tag latest..."
-
-              if [ "$IMAGE" = "cart" ]; then
-                docker build \
-                  -f src/cart/src/Dockerfile \
-                  -t $IMAGE_PREFIX-$IMAGE:latest \
-                  --build-arg OTEL_JAVA_AGENT_VERSION=$OTEL_JAVA_AGENT_VERSION \
-                  src/cart
-              else
-                docker build \
-                  -f src/$IMAGE/Dockerfile \
-                  -t $IMAGE_PREFIX-$IMAGE:latest \
-                  --build-arg OTEL_JAVA_AGENT_VERSION=$OTEL_JAVA_AGENT_VERSION \
-                  src/$IMAGE
-              fi
-
+              docker build \
+                -f $DOCKERFILE_PATH \
+                --build-arg OTEL_JAVA_AGENT_VERSION=1.33.0 \
+                -t $IMAGE_PREFIX-$IMAGE:latest .
               docker push $IMAGE_PREFIX-$IMAGE:latest
             else
               echo "⏭️ Skipping $IMAGE (no changes)"
             fi
           done
+
