@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: valkey-cart
+  labels:
+    app: valkey-cart
+spec:
+  replicas: {{ .Values.valkeyCart.replicaCount }}
+  selector:
+    matchLabels:
+      app: valkey-cart
+  template:
+    metadata:
+      labels:
+        app: valkey-cart
+    spec:
+      containers:
+        - name: valkey-cart
+          image: "{{ .Values.global.image.registry }}/{{ .Values.valkeyCart.image.name }}:{{ .Values.global.image.tag }}"
+          imagePullPolicy: {{ .Values.global.image.pullPolicy }}
+          ports:
+            - containerPort: 6379

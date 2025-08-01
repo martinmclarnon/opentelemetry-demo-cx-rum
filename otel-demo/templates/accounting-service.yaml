@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "otel-demo.fullname" . }}-accounting
+  labels:
+    app: accounting
+    {{- include "otel-demo.labels" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  selector:
+    app: accounting
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080

@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "otel-demo.fullname" . }}-accounting
+  labels:
+    app: accounting
+    {{- include "otel-demo.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.accounting.replicaCount }}
+  selector:
+    matchLabels:
+      app: accounting
+  template:
+    metadata:
+      labels:
+        app: accounting
+    spec:
+      containers:
+        - name: accounting
+          image: "{{ .Values.image.registry }}/opentelemetry-demo-cx-rum-accounting:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: KAFKA_ADDR
+              value: {{ .Values.global.kafkaAddr | quote }}
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: {{ .Values.global.otelExporterOtlpEndpoint | quote }}
+            - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+              value: {{ .Values.global.otelMetricsTemporality | quote }}
+            - name: OTEL_RESOURCE_ATTRIBUTES
+              value: {{ .Values.global.otelResourceAttributes | quote }}
+            - name: OTEL_SERVICE_NAME
+              value: "accounting"
+          resources:
+            limits:
+              memory: {{ .Values.accounting.resources.limits.memory }}

@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-proxy
+  labels:
+    app: frontend-proxy
+spec:
+  replicas: {{ .Values.frontendProxy.replicaCount }}
+  selector:
+    matchLabels:
+      app: frontend-proxy
+  template:
+    metadata:
+      labels:
+        app: frontend-proxy
+    spec:
+      containers:
+        - name: frontend-proxy
+          image: "{{ .Values.global.image.registry }}/{{ .Values.frontendProxy.image.name }}:{{ .Values.global.image.tag }}"
+          imagePullPolicy: {{ .Values.global.image.pullPolicy }}
+          resources:
+            limits:
+              memory: {{ .Values.frontendProxy.resources.limits.memory }}
+          env:
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: "{{ .Values.global.otelCollector.endpoint }}"
+            - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+              value: "{{ .Values.global.otelCollector.metricsTemporalityPreference }}"
+            - name: OTEL_RESOURCE_ATTRIBUTES
+              value: "{{ .Values.global.otelCollector.resourceAttributes }}"
+            - name: OTEL_SERVICE_NAME
+              value: "frontend-proxy"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-proxy
+spec:
+  selector:
+    app: frontend-proxy
+  ports:
+    - port: 8080
+      targetPort: 8080
+      protocol: TCP

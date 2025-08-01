@@ -121,3 +121,223 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+
+# Global settings
+global:  
+  image:
+    registry: ghcr.io/martinmclarnon
+    tag: latest
+    pullPolicy: IfNotPresent
+  kafkaAddr: kafka:9092
+  otelCollector:
+    endpoint: http://otel-collector:4318
+    metricsTemporalityPreference: cumulative
+    resourceAttributes: service.namespace=opentelemetry-demo
+
+# Accounting Service
+accounting:
+  replicaCount: 1
+  image:
+    name: opentelemetry-demo-cx-rum-accounting
+  resources:
+    limits:
+      memory: 120Mi
+
+# ad Service
+ad:
+  replicaCount: 1
+  image:
+    name: opentelemetry-demo-cx-rum-ad
+  resources:
+    limits:
+      memory: 120Mi
+
+# Cart Service
+cart:
+  replicaCount: 1
+  image:
+    name: opentelemetry-demo-cx-rum-cart
+  resources:
+    limits:
+      memory: 120Mi
+
+# Checkout Service
+checkout:
+  replicaCount: 1
+  image:
+    name: opentelemetry-demo-cx-rum-checkout
+  resources:
+    limits:
+      memory: 120Mi
+
+# Currency Service
+currency:
+  replicaCount: 1
+  image:
+    name: opentelemetry-demo-cx-rum-currency
+  resources:
+    limits:
+      memory: 120Mi
+
+# Email Service
+email:
+  replicaCount: 1
+  image:
+    name: opentelemetry-demo-cx-rum-email
+  resources:
+    limits:
+      memory: 120Mi
+
+# Fraud Detection Service
+fraudDetection:
+  replicaCount: 1
+  image:
+    name: opentelemetry-demo-cx-rum-fraud-detection
+  resources:
+    limits:
+      memory: 120Mi
+
+# Frontend Service
+frontend:
+  replicaCount: 1
+  image:
+    name: opentelemetry-demo-cx-rum-frontend
+  resources:
+    limits:
+      memory: 250Mi
+  port: 8080 # or ${FRONTEND_PORT}, if defined globally
+  env:
+    PORT: "8080"
+    FRONTEND_ADDR: "frontend:8080"
+    AD_ADDR: "ad:8080"
+    CART_ADDR: "cart:8080"
+    CHECKOUT_ADDR: "checkout:8080"
+    CURRENCY_ADDR: "currency:8080"
+    PRODUCT_CATALOG_ADDR: "product-catalog:8080"
+    RECOMMENDATION_ADDR: "recommendation:8080"
+    SHIPPING_ADDR: "shipping:8080"
+    QUOTE_ADDR: "quote:8080"
+    EMAIL_ADDR: "email:8080"
+    PAYMENT_ADDR: "payment:8080"
+    FRAUD_DETECTION_ADDR: "fraud-detection:8080"  
+  rum:
+    enabled: false
+    env:
+    CORALOGIX_RUM_ENABLE: "false"
+    CORALOGIX_RUM_ENV: "<YOUR_SUBSYSTEM_NAME>"
+    CORALOGIX_RUM_APP: "<YOUR_APPLICATION_NAME>"
+    CORALOGIX_RUM_KEY: "<YOUR_CORALOGIX_KEY>"
+    CORALOGIX_RUM_DOMAIN: "<YOUR_CORALOGIX_DOMAIN>"
+    CORALOGIX_RUM_VERSION: "<YOUR_CORALOGIX_VERSION>"
+    CORALOGIX_RUM_SDK_URL: "<YOUR_CORALOGIX_SDK_URL>"
+    CORALOGIX_RUM_USER_EMAIL: "<YOUR_CORALOGIX_USER_EMAIL>"
+    CORALOGIX_RUM_USER_NAME: "<YOUR_CORALOGIX_USER_NAME>"
+    CORALOGIX_RUM_USER_ID: "<YOUR_CORALOGIX_USER_ID>"
+
+# Frontend Proxy Service
+frontendProxy:
+  replicaCount: 1
+  image:
+    name: opentelemetry-demo-cx-rum-frontend-proxy
+  resources:
+    limits:
+      memory: 100Mi
+
+# Image Provider ServiceÍ
+imageProvider:
+  replicaCount: 1
+  image:
+    name: opentelemetry-demo-cx-rum-image-provider
+  resources:
+    limits:
+      memory: 120Mi
+
+# Load Generator Service
+loadGenerator:
+  replicaCount: 1
+  image:
+    name: opentelemetry-demo-cx-rum-load-generator
+  resources:
+    limits:
+      memory: 120Mi
+
+# Payment Service
+payment:
+  replicaCount: 1
+  image:
+    name: opentelemetry-demo-cx-rum-payment
+  resources:
+    limits:
+      memory: 120Mi
+
+# Product Catalog Service
+productCatalog:
+  replicaCount: 1
+  image:
+    name: opentelemetry-demo-cx-rum-product-catalog
+  resources:
+    limits:
+      memory: 120Mi
+
+# Quote Service
+quote:
+  replicaCount: 1
+  image:
+    name: opentelemetry-demo-cx-rum-quote
+  resources:
+    limits:
+      memory: 120Mi
+
+# Recommendation Service
+recommendation:
+  replicaCount: 1
+  image:
+    name: opentelemetry-demo-cx-rum-recommendation
+  resources:
+    limits:
+      memory: 120Mi
+
+# Shipping Service
+shipping:
+  replicaCount: 1
+  image:
+    name: opentelemetry-demo-cx-rum-shipping
+  resources:
+    limits:
+      memory: 120Mi
+
+# Flagd Service
+flagd:
+  replicaCount: 1
+  image:
+    name: opentelemetry-demo-cx-rum-flagd
+  resources:
+    limits:
+      memory: 120Mi
+
+# Flagd UI Service
+flagdUi:
+  replicaCount: 1
+  image:
+    name: opentelemetry-demo-cx-rum-flagd-ui
+  resources:
+    limits:
+      memory: 120Mi
+
+# Kafka Service
+kafka:
+  replicaCount: 1
+  image:
+    name: opentelemetry-demo-cx-rum-kafka
+  resources:
+    limits:
+      memory: 120Mi
+
+# Valkey Cart Service
+valkeyCart:
+  replicaCount: 1
+  image:
+    name: opentelemetry-demo-cx-rum-valkey-cart
+  resources:
+    limits:
+      memory: 120Mi

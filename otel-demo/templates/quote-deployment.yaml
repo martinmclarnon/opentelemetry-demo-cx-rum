@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: quote
+  labels:
+    app: quote
+spec:
+  replicas: {{ .Values.quote.replicaCount }}
+  selector:
+    matchLabels:
+      app: quote
+  template:
+    metadata:
+      labels:
+        app: quote
+    spec:
+      containers:
+        - name: quote
+          image: "{{ .Values.global.image.registry }}/{{ .Values.quote.image.name }}:{{ .Values.global.image.tag }}"
+          imagePullPolicy: {{ .Values.global.image.pullPolicy }}
+          resources:
+            limits:
+              memory: {{ .Values.quote.resources.limits.memory }}
+          env:
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: "{{ .Values.global.otelCollector.endpoint }}"
+            - name: OTEL_METRICS_TEMPORALITY_PREFERENCE
+              value: "{{ .Values.global.otelCollector.metricsTemporalityPreference }}"
+            - name: OTEL_RESOURCE_ATTRIBUTES
+              value: "{{ .Values.global.otelCollector.resourceAttributes }}"
+            - name: OTEL_SERVICE_NAME
+              value: "quote"

@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: valkey-cart
+  labels:
+    app: valkey-cart
+spec:
+  type: ClusterIP
+  selector:
+    app: valkey-cart
+  ports:
+    - protocol: TCP
+      port: 6379
+      targetPort: 6379

@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: product-catalog
+  labels:
+    app: product-catalog
+spec:
+  replicas: {{ .Values.productCatalog.replicaCount }}
+  selector:
+    matchLabels:
+      app: product-catalog
+  template:
+    metadata:
+      labels:
+        app: product-catalog
+    spec:
+      containers:
+        - name: product-catalog
+          image: "{{ .Values.global.image.registry }}/{{ .Values.productCatalog.image.name }}:{{ .Values.global.image.tag }}"
+          imagePullPolicy: {{ .Values.global.image.pullPolicy }}
+          resources:
+            limits:
+              memory: {{ .Values.productCatalog.resources.limits.memory }}
+          env:
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: "{{ .Values.global.otelCollector.endpoint }}"
+            - name: OTEL_METRICS_TEMPORALITY_PREFERENCE
+              value: "{{ .Values.global.otelCollector.metricsTemporalityPreference }}"
+            - name: OTEL_RESOURCE_ATTRIBUTES
+              value: "{{ .Values.global.otelCollector.resourceAttributes }}"
+            - name: OTEL_SERVICE_NAME
+              value: "product-catalog"

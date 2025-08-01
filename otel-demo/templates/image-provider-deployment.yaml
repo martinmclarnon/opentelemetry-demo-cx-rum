@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: image-provider
+  labels:
+    app: image-provider
+spec:
+  replicas: {{ .Values.imageProvider.replicaCount }}
+  selector:
+    matchLabels:
+      app: image-provider
+  template:
+    metadata:
+      labels:
+        app: image-provider
+    spec:
+      containers:
+        - name: image-provider
+          image: "{{ .Values.global.image.registry }}/{{ .Values.imageProvider.image.name }}:{{ .Values.global.image.tag }}"
+          imagePullPolicy: {{ .Values.global.image.pullPolicy }}
+          resources:
+            limits:
+              memory: {{ .Values.imageProvider.resources.limits.memory }}
+          env:
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: "{{ .Values.global.otelCollector.endpoint }}"
+            - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+              value: "{{ .Values.global.otelCollector.metricsTemporalityPreference }}"
+            - name: OTEL_RESOURCE_ATTRIBUTES
+              value: "{{ .Values.global.otelCollector.resourceAttributes }}"
+            - name: OTEL_SERVICE_NAME
+              value: "image-provider"
+

@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "otel-demo.fullname" . }}-ad
+  labels:
+    app: ad
+    {{- include "otel-demo.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.ad.replicaCount }}
+  selector:
+    matchLabels:
+      app: ad
+  template:
+    metadata:
+      labels:
+        app: ad
+    spec:
+      containers:
+        - name: ad
+          image: "{{ .Values.global.image.registry }}/opentelemetry-demo-cx-rum-ad:{{ .Values.global.image.tag }}"
+          imagePullPolicy: {{ .Values.global.image.pullPolicy }}
+          resources:
+            limits:
+              memory: {{ .Values.ad.resources.limits.memory }}
+          env:
+            - name: KAFKA_ADDR
+              value: {{ .Values.global.kafkaAddr }}
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: {{ .Values.global.otelCollector.endpoint }}
+            - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+              value: {{ .Values.global.otelCollector.metricsTemporalityPreference }}
+            - name: OTEL_RESOURCE_ATTRIBUTES
+              value: {{ .Values.global.otelCollector.resourceAttributes }}

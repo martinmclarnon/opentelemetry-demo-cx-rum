@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "otel-demo.fullname" . }}-frontend
+  labels:
+    app: frontend
+    {{- include "otel-demo.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.frontend.replicaCount }}
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+        - name: frontend
+          image: "{{ .Values.global.image.registry }}/opentelemetry-demo-cx-rum-frontend:{{ .Values.global.image.tag }}"
+          imagePullPolicy: {{ .Values.global.image.pullPolicy }}
+          resources:
+            limits:
+              memory: {{ .Values.frontend.resources.limits.memory }}
+          env:
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: {{ .Values.global.otelCollector.endpoint }}
+            - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+              value: {{ .Values.global.otelCollector.metricsTemporalityPreference }}
+            - name: OTEL_RESOURCE_ATTRIBUTES
+              value: {{ .Values.global.otelCollector.resourceAttributes }}
+            - name: RUM_ENABLED
+              value: "{{ .Values.frontend.rum.enabled }}"
+            - name: RUM_APP_NAME
+              value: "{{ .Values.frontend.rum.appName }}"
+            - name: RUM_AUTH
+              value: "{{ .Values.frontend.rum.auth }}"

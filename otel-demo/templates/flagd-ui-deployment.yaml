@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flagd-ui
+  labels:
+    app: flagd-ui
+spec:
+  replicas: {{ .Values.flagdUi.replicaCount }}
+  selector:
+    matchLabels:
+      app: flagd-ui
+  template:
+    metadata:
+      labels:
+        app: flagd-ui
+    spec:
+      containers:
+        - name: flagd-ui
+          image: "{{ .Values.global.image.registry }}/{{ .Values.flagdUi.image.name }}:{{ .Values.global.image.tag }}"
+          imagePullPolicy: {{ .Values.global.image.pullPolicy }}
+          ports:
+            - containerPort: 3000

@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payment
+  labels:
+    app: payment
+spec:
+  replicas: {{ .Values.payment.replicaCount }}
+  selector:
+    matchLabels:
+      app: payment
+  template:
+    metadata:
+      labels:
+        app: payment
+    spec:
+      containers:
+        - name: payment
+          image: "{{ .Values.global.image.registry }}/{{ .Values.payment.image.name }}:{{ .Values.global.image.tag }}"
+          imagePullPolicy: {{ .Values.global.image.pullPolicy }}
+          resources:
+            limits:
+              memory: {{ .Values.payment.resources.limits.memory }}
+          env:
+            - name: KAFKA_ADDR
+              value: "{{ .Values.global.kafkaAddr }}"
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: "{{ .Values.global.otelCollector.endpoint }}"
+            - name: OTEL_METRICS_TEMPORALITY_PREFERENCE
+              value: "{{ .Values.global.otelCollector.metricsTemporalityPreference }}"
+            - name: OTEL_RESOURCE_ATTRIBUTES
+              value: "{{ .Values.global.otelCollector.resourceAttributes }}"
+            - name: OTEL_SERVICE_NAME
+              value: "payment"

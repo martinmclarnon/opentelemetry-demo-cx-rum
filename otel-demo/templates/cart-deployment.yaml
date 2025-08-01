@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "otel-demo.fullname" . }}-cart
+  labels:
+    app: cart
+    {{- include "otel-demo.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.cart.replicaCount }}
+  selector:
+    matchLabels:
+      app: cart
+  template:
+    metadata:
+      labels:
+        app: cart
+    spec:
+      containers:
+        - name: cart
+          image: "{{ .Values.global.image.registry }}/opentelemetry-demo-cx-rum-cart:{{ .Values.global.image.tag }}"
+          imagePullPolicy: {{ .Values.global.image.pullPolicy }}
+          resources:
+            limits:
+              memory: {{ .Values.cart.resources.limits.memory }}
+          env:
+            - name: KAFKA_ADDR
+              value: {{ .Values.global.kafkaAddr }}
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: {{ .Values.global.otelCollector.endpoint }}
+            - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+              value: {{ .Values.global.otelCollector.metricsTemporalityPreference }}
+            - name: OTEL_RESOURCE_ATTRIBUTES
+              value: {{ .Values.global.otelCollector.resourceAttributes }}
