@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "otel-demo.fullname" . }}-email
+  name: email
   labels:
     app: email
     {{- include "otel-demo.labels" . | nindent 4 }}

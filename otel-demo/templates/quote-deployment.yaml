@@ -4,6 +4,7 @@ metadata:
   name: quote
   labels:
     app: quote
+    {{- include "otel-demo.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.quote.replicaCount }}
   selector:

@@ -4,6 +4,7 @@ metadata:
   name: kafka
   labels:
     app: kafka
+    {{- include "otel-demo.labels" . | nindent 4 }}
 spec:
   type: ClusterIP
   selector:

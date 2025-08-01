@@ -4,6 +4,7 @@ metadata:
   name: valkey-cart
   labels:
     app: valkey-cart
+    {{- include "otel-demo.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.valkeyCart.replicaCount }}
   selector:

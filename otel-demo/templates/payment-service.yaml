@@ -4,6 +4,7 @@ metadata:
   name: payment
   labels:
     app: payment
+    {{- include "otel-demo.labels" . | nindent 4 }}
 spec:
   selector:
     app: payment

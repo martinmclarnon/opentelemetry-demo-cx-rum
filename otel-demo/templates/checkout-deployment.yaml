@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "otel-demo.fullname" . }}-checkout
+  name: checkout
   labels:
     app: checkout
     {{- include "otel-demo.labels" . | nindent 4 }}

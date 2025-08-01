@@ -4,6 +4,7 @@ metadata:
   name: frontend-proxy
   labels:
     app: frontend-proxy
+    {{- include "otel-demo.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.frontendProxy.replicaCount }}
   selector:
@@ -30,15 +31,3 @@ spec:
               value: "{{ .Values.global.otelCollector.resourceAttributes }}"
             - name: OTEL_SERVICE_NAME
               value: "frontend-proxy"
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: frontend-proxy
-spec:
-  selector:
-    app: frontend-proxy
-  ports:
-    - port: 8080
-      targetPort: 8080
-      protocol: TCP

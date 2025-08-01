@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "otel-demo.fullname" . }}-currency
+  name: currency
   labels:
     app: currency
     {{- include "otel-demo.labels" . | nindent 4 }}

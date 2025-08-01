@@ -4,6 +4,7 @@ metadata:
   name: flagd-ui
   labels:
     app: flagd-ui
+    {{- include "otel-demo.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.flagdUi.replicaCount }}
   selector:

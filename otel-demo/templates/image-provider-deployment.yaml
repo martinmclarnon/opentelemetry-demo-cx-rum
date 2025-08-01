@@ -4,6 +4,7 @@ metadata:
   name: image-provider
   labels:
     app: image-provider
+    {{- include "otel-demo.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.imageProvider.replicaCount }}
   selector:

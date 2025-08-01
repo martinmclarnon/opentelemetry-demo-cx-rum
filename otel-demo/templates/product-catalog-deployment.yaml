@@ -4,6 +4,7 @@ metadata:
   name: product-catalog
   labels:
     app: product-catalog
+    {{- include "otel-demo.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.productCatalog.replicaCount }}
   selector:

@@ -4,6 +4,7 @@ metadata:
   name: shipping
   labels:
     app: shipping
+    {{- include "otel-demo.labels" . | nindent 4 }}
 spec:
   selector:
     app: shipping

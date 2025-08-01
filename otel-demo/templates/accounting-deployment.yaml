@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "otel-demo.fullname" . }}-accounting
+  name: accounting
   labels:
     app: accounting
     {{- include "otel-demo.labels" . | nindent 4 }}
@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: accounting
-          image: "{{ .Values.image.registry }}/opentelemetry-demo-cx-rum-accounting:{{ .Values.image.tag }}"
+          image: "{{ .Values.image.registry }}/{{ .Values.imageProvider.image.name }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
             - name: KAFKA_ADDR

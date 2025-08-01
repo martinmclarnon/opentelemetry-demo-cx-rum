@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "otel-demo.fullname" . }}-accounting
+  name: accounting
   labels:
     app: accounting
     {{- include "otel-demo.labels" . | nindent 4 }}

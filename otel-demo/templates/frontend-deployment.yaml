@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "otel-demo.fullname" . }}-frontend
+  name: frontend
   labels:
     app: frontend
     {{- include "otel-demo.labels" . | nindent 4 }}

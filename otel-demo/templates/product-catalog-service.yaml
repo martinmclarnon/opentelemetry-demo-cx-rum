@@ -4,6 +4,7 @@ metadata:
   name: product-catalog
   labels:
     app: product-catalog
+    {{- include "otel-demo.labels" . | nindent 4 }}
 spec:
   selector:
     app: product-catalog

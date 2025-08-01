@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "otel-demo.fullname" . }}-fraud-detection
+  name: fraud-detection
   labels:
     app: fraud-detection
     {{- include "otel-demo.labels" . | nindent 4 }}

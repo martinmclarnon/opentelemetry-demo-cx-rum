@@ -4,6 +4,7 @@ metadata:
   name: load-generator
   labels:
     app: load-generator
+    {{- include "otel-demo.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.loadGenerator.replicaCount }}
   selector:
