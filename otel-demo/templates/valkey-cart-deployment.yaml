@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: valkey-cart
-          image: "{{ .Values.global.image.registry }}/{{ .Values.valkeyCart.image.name }}:{{ .Values.global.image.tag }}"
+          image: "{{ .Values.valkeyCart.image.name }}"
           imagePullPolicy: {{ .Values.global.image.pullPolicy }}
           ports:
             - containerPort: 6379
