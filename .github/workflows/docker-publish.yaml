@@ -61,11 +61,6 @@ jobs:
               DOCKERFILE_PATH="src/cart/src/Dockerfile"
             fi
 
-            # Special case for currency service
-            if [ "$IMAGE" = "currency" ]; then
-              DOCKERFILE_PATH="src/currency/src/Dockerfile"
-            fi
-
             if echo "$CHANGED" | grep -q "^src/$IMAGE/"; then
               echo "🔨 Building and pushing $IMAGE (changed) as tag latest..."
               docker build \
