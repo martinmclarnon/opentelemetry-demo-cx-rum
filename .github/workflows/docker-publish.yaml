@@ -45,7 +45,7 @@ jobs:
 
       - name: Build and push images
         run: |
-          IMAGES="accounting ad cart checkout currency email fraud-detection frontend frontend-proxy image-provider load-generator quote product-catalog recommendation shipping kafka flagd-ui"
+          IMAGES="accounting ad cart checkout currency email fraud-detection frontend frontend-proxy image-provider load-generator payment product-catalog quote recommendation shipping kafka flagd-ui"
           BASE_SHA=$(git rev-parse HEAD~1 || echo "")
           if [ -z "$BASE_SHA" ] || ! git cat-file -e $BASE_SHA 2>/dev/null; then
             echo "⚠️ Base commit missing or invalid, falling back to HEAD"
