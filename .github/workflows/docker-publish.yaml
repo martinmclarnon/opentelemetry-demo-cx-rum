@@ -66,6 +66,7 @@ jobs:
               docker build \
                 -f $DOCKERFILE_PATH \
                 --build-arg OTEL_JAVA_AGENT_VERSION=1.33.0 \
+                --build-arg OPENTELEMETRY_CPP_VERSION=1.18.0 \
                 -t $IMAGE_PREFIX-$IMAGE:latest .
               docker push $IMAGE_PREFIX-$IMAGE:latest
             else
