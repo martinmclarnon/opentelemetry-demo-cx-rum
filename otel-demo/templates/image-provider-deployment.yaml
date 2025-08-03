@@ -23,12 +23,16 @@ spec:
             limits:
               memory: {{ .Values.imageProvider.resources.limits.memory }}
           env:
+            - name: OTEL_COLLECTOR_HOST
+              value: {{ .Values.global.otel_collector_host | quote }}
+            - name: OTEL_COLLECTOR_PORT_GRPC
+              value: {{ .Values.global.otel_collector_port_grpc | quote }}
+            - name: OTEL_COLLECTOR_PORT_HTTP
+              value: {{ .Values.global.otel_collector_port_http | quote }}
             - name: OTEL_EXPORTER_OTLP_ENDPOINT
-              value: "{{ .Values.global.otelCollector.endpoint }}"
-            - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
-              value: "{{ .Values.global.otelCollector.metricsTemporalityPreference }}"
-            - name: OTEL_RESOURCE_ATTRIBUTES
-              value: "{{ .Values.global.otelCollector.resourceAttributes }}"
+              value: "http://{{ .Values.global.otel_collector_host }}:{{ .Values.global.otel_collector_port_grpc }}"
+            - name: PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+              value: {{ .Values.global.public_otel_exporter_otlp_traces_endpoint | quote }}
             - name: OTEL_SERVICE_NAME
               value: "image-provider"
 

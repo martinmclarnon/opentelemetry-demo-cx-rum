@@ -128,11 +128,16 @@ global:
     registry: ghcr.io/martinmclarnon
     tag: latest
     pullPolicy: IfNotPresent
+  ad_port: 9555
   kafkaAddr: kafka:9092
-  otelCollector:
-    endpoint: http://otel-collector:4318
-    metricsTemporalityPreference: cumulative
-    resourceAttributes: service.namespace=opentelemetry-demo
+  flagd_host: flagd
+  flagd_port: 8013
+  otel_collector_host: coralogix-opentelemetry-collector
+  otel_collector_port_grpc: 4317
+  otel_collector_port_http: 4318
+  public_otel_exporter_otlp_traces_endpoint: http://localhost:8080/otlp-http/v1/traces
+  otel_resource_attributes: service.namespace=opentelemetry-demo,service.version=2.0.0
+  otel_exporter_otlp_metrics_temporality_preference: cumulative
 
 # Accounting Service
 accounting:
@@ -141,7 +146,7 @@ accounting:
     name: opentelemetry-demo-cx-rum-accounting
   resources:
     limits:
-      memory: 256Mi
+      memory: 512Mi
 
 # ad Service
 ad:
@@ -150,7 +155,7 @@ ad:
     name: opentelemetry-demo-cx-rum-ad
   resources:
     limits:
-      memory: 256Mi
+      memory: 512Mi
 
 # Cart Service
 cart:
@@ -159,7 +164,7 @@ cart:
     name: opentelemetry-demo-cx-rum-cart
   resources:
     limits:
-      memory: 256Mi
+      memory: 512Mi
 
 # Checkout Service
 checkout:
@@ -168,7 +173,7 @@ checkout:
     name: opentelemetry-demo-cx-rum-checkout
   resources:
     limits:
-      memory: 256Mi
+      memory: 512Mi
 
 # Currency Service
 currency:
@@ -177,7 +182,7 @@ currency:
     name: opentelemetry-demo-cx-rum-currency
   resources:
     limits:
-      memory: 256Mi
+      memory: 512Mi
 
 # Email Service
 email:
@@ -186,7 +191,7 @@ email:
     name: opentelemetry-demo-cx-rum-email
   resources:
     limits:
-      memory: 256Mi
+      memory: 512Mi
 
 # Fraud Detection Service
 fraudDetection:
@@ -195,7 +200,7 @@ fraudDetection:
     name: opentelemetry-demo-cx-rum-fraud-detection
   resources:
     limits:
-      memory: 256Mi
+      memory: 512Mi
 
 # Frontend Service
 frontend:
@@ -250,7 +255,7 @@ imageProvider:
     name: opentelemetry-demo-cx-rum-image-provider
   resources:
     limits:
-      memory: 256Mi
+      memory: 512Mi
 
 # Load Generator Service
 loadGenerator:
@@ -259,7 +264,7 @@ loadGenerator:
     name: opentelemetry-demo-cx-rum-load-generator
   resources:
     limits:
-      memory: 256Mi
+      memory: 512Mi
 
 # Payment Service
 payment:
@@ -268,7 +273,7 @@ payment:
     name: opentelemetry-demo-cx-rum-payment
   resources:
     limits:
-      memory: 256Mi
+      memory: 512Mi
 
 # Product Catalog Service
 productCatalog:
@@ -277,7 +282,7 @@ productCatalog:
     name: opentelemetry-demo-cx-rum-product-catalog
   resources:
     limits:
-      memory: 256Mi
+      memory: 512Mi
 
 # Quote Service
 quote:
@@ -286,7 +291,7 @@ quote:
     name: opentelemetry-demo-cx-rum-quote
   resources:
     limits:
-      memory: 256Mi
+      memory: 512Mi
 
 # Recommendation Service
 recommendation:
@@ -295,7 +300,7 @@ recommendation:
     name: opentelemetry-demo-cx-rum-recommendation
   resources:
     limits:
-      memory: 256Mi
+      memory: 512Mi
 
 # Shipping Service
 shipping:
@@ -304,7 +309,7 @@ shipping:
     name: opentelemetry-demo-cx-rum-shipping
   resources:
     limits:
-      memory: 256Mi
+      memory: 512Mi
 
 # Flagd UI Service
 flagdUi:
@@ -313,7 +318,7 @@ flagdUi:
     name: opentelemetry-demo-cx-rum-flagd-ui
   resources:
     limits:
-      memory: 256Mi
+      memory: 512Mi
 
 # Kafka Service
 kafka:
@@ -322,7 +327,7 @@ kafka:
     name: opentelemetry-demo-cx-rum-kafka
   resources:
     limits:
-      memory: 256Mi
+      memory: 768Mi
 
 # Valkey Cart Service
 valkeyCart:
@@ -331,4 +336,4 @@ valkeyCart:
     name: valkey/valkey:8.0-alpine
   resources:
     limits:
-      memory: 256Mi
+      memory: 512Mi

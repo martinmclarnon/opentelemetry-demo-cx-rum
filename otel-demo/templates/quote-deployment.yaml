@@ -22,12 +22,23 @@ spec:
           resources:
             limits:
               memory: {{ .Values.quote.resources.limits.memory }}
+
           env:
-            - name: OTEL_EXPORTER_OTLP_ENDPOINT
-              value: "{{ .Values.global.otelCollector.endpoint }}"
-            - name: OTEL_METRICS_TEMPORALITY_PREFERENCE
-              value: "{{ .Values.global.otelCollector.metricsTemporalityPreference }}"
-            - name: OTEL_RESOURCE_ATTRIBUTES
-              value: "{{ .Values.global.otelCollector.resourceAttributes }}"
+            - name: OTEL_PHP_AUTOLOAD_ENABLED
+              value: "true"
+            - name: QUOTE_PORT
+              value: "${QUOTE_PORT}"
             - name: OTEL_SERVICE_NAME
               value: "quote"
+            - name: OTEL_PHP_INTERNAL_METRICS_ENABLED
+              value: "true"
+            - name: OTEL_COLLECTOR_HOST
+              value: {{ .Values.global.otel_collector_host | quote }}
+            - name: OTEL_COLLECTOR_PORT_GRPC
+              value: {{ .Values.global.otel_collector_port_grpc | quote }}
+            - name: OTEL_COLLECTOR_PORT_HTTP
+              value: {{ .Values.global.otel_collector_port_http | quote }}
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: "http://{{ .Values.global.otel_collector_host }}:{{ .Values.global.otel_collector_port_grpc }}"
+            - name: PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+              value: {{ .Values.global.public_otel_exporter_otlp_traces_endpoint | quote }}

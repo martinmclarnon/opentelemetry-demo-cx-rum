@@ -17,17 +17,21 @@ spec:
     spec:
       containers:
         - name: accounting
-          image: "{{ .Values.image.registry }}/{{ .Values.imageProvider.image.name }}:{{ .Values.image.tag }}"
+          image: "{{ .Values.global.image.registry }}/{{ .Values.accounting.image.name }}:{{ .Values.global.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
             - name: KAFKA_ADDR
               value: {{ .Values.global.kafkaAddr | quote }}
+            - name: OTEL_COLLECTOR_HOST
+              value: {{ .Values.global.otel_collector_host | quote }}
+            - name: OTEL_COLLECTOR_PORT_GRPC
+              value: {{ .Values.global.otel_collector_port_grpc | quote }}
+            - name: OTEL_COLLECTOR_PORT_HTTP
+              value: {{ .Values.global.otel_collector_port_http | quote }}
             - name: OTEL_EXPORTER_OTLP_ENDPOINT
-              value: {{ .Values.global.otelExporterOtlpEndpoint | quote }}
-            - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
-              value: {{ .Values.global.otelMetricsTemporality | quote }}
-            - name: OTEL_RESOURCE_ATTRIBUTES
-              value: {{ .Values.global.otelResourceAttributes | quote }}
+              value: "http://{{ .Values.global.otel_collector_host }}:{{ .Values.global.otel_collector_port_grpc }}"
+            - name: PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+              value: {{ .Values.global.public_otel_exporter_otlp_traces_endpoint | quote }}
             - name: OTEL_SERVICE_NAME
               value: "accounting"
           resources:

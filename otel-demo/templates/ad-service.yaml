@@ -10,5 +10,5 @@ spec:
     app: ad
   ports:
     - protocol: TCP
-      port: 80
-      targetPort: 8080
+      port: {{ .Values.global.ad_port}}
+      targetPort: {{ .Values.global.ad_port }}

@@ -1,0 +1,60 @@
+global:
+  domain: coralogix.com
+  clusterName: otel-demo
+opentelemetry-cluster-collector:
+  presets:
+    kubernetesEvents:
+      enabled: true
+    reduceResourceAttributes:
+      enabled: true
+    kubernetesResources:
+      enabled: true
+    fleetManagement:
+      enabled: true
+    clusterMetrics:
+      enabled: true
+    collectorMetrics:
+      enabled: true
+    kubernetesExtraMetrics:
+      enabled: true
+      scrapeAll: false
+opentelemetry-agent:
+  presets:
+    hostEntityEvents:
+      enabled: true
+    fleetManagement:
+      enabled: true
+    spanMetrics:
+      enabled: true
+      histogramBuckets:
+      - 1ms
+      - 4ms
+      - 10ms
+      - 20ms
+      - 50ms
+      - 100ms
+      - 200ms
+      - 500ms
+      - 1s
+      - 2s
+      - 5s
+      transformStatements: []
+    headSampling:
+      enabled: true
+      percentage: 10.0
+    logsCollection:
+      enabled: true
+    kubeletMetrics:
+      enabled: true
+    collectorMetrics:
+      enabled: true
+    statsdReceiver:
+      enabled: true
+    hostMetrics:
+      enabled: true
+      process:
+        enabled: true
+  targetAllocator:
+    enabled: false
+coralogix-ebpf-profiler:
+  enabled: false

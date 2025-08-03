@@ -17,17 +17,31 @@ spec:
     spec:
       containers:
         - name: ad
-          image: "{{ .Values.global.image.registry }}/opentelemetry-demo-cx-rum-ad:{{ .Values.global.image.tag }}"
+          image: "{{ .Values.global.image.registry }}/{{ .Values.ad.image.name }}:{{ .Values.global.image.tag }}"
           imagePullPolicy: {{ .Values.global.image.pullPolicy }}
           resources:
             limits:
               memory: {{ .Values.ad.resources.limits.memory }}
           env:
-            - name: KAFKA_ADDR
-              value: {{ .Values.global.kafkaAddr }}
+            - name: AD_PORT
+              value: {{ .Values.global.ad_port | quote }}
+            - name: FLAGD_HOST
+              value: {{ .Values.global.flagd_host | quote }}
+            - name: FLAGD_PORT
+              value: {{ .Values.global.flagd_port | quote }}
+            - name: OTEL_COLLECTOR_HOST
+              value: {{ .Values.global.otel_collector_host | quote }}
+            - name: OTEL_COLLECTOR_PORT_GRPC
+              value: {{ .Values.global.otel_collector_port_grpc | quote }}
+            - name: OTEL_COLLECTOR_PORT_HTTP
+              value: {{ .Values.global.otel_collector_port_http | quote }}
             - name: OTEL_EXPORTER_OTLP_ENDPOINT
-              value: {{ .Values.global.otelCollector.endpoint }}
-            - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
-              value: {{ .Values.global.otelCollector.metricsTemporalityPreference }}
-            - name: OTEL_RESOURCE_ATTRIBUTES
-              value: {{ .Values.global.otelCollector.resourceAttributes }}
+              value: "http://{{ .Values.global.otel_collector_host }}:{{ .Values.global.otel_collector_port_grpc }}"
+            - name: PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+              value: {{ .Values.global.public_otel_exporter_otlp_traces_endpoint | quote }}
+            - name: OTEL_LOGS_EXPORTER
+              value: otlp
+            - name: OTEL_SERVICE_NAME
+              value: ad
+            - name: _JAVA_OPTIONS
+              value: "-Djava.security.egd=file:/dev/./urandom"
